@@ -9,7 +9,9 @@ import video from './video.mp4';
 export const Player = () => {
     const [isPlaying, setIsPlaying] = useState(false);
     const [progress, setProgress] = useState(0);
-    const [ isProgressCapturing, setIsProgressCapturing ] = useState(false);
+    const [isProgressCapturing, setIsProgressCapturing ] = useState(false);
+    const [volume, setVolume] = useState('0.5');
+    const [playbackRate, setPlaybackRate] = useState('1');
 
     const videoRef = useRef(null);
 
@@ -18,6 +20,21 @@ export const Player = () => {
         //console.log(videoRef);
         videoRef.current[method]();
         setIsPlaying(method ==='play');
+    };
+
+    // document.addEventListener("keypress", function(e) {
+    //       if (e.keyCode === 13) {
+    //         toggleFullScreen(videoRef.current);
+    //       }
+    //     }, false);
+    const toggleFullScreen = (element) => {
+      if(element.requestFullscreen) {
+        element.requestFullscreen();
+      } else if(element.webkitrequestFullscreen) {
+        element.webkitRequestFullscreen();
+      } else if(element.mozRequestFullscreen) {
+        element.mozRequestFullScreen();
+      }
     };
 
     const skip = event => {
@@ -31,6 +48,17 @@ export const Player = () => {
         //console.log(percent);
         setProgress(percent);
     };
+
+    const onChangeVolume = event =>{
+        videoRef.current.volume = event.target.value
+        setVolume(event.target.value)
+    };
+
+    const onChangePlaybackRate = event =>{
+        videoRef.current.playbackRate = event.target.value
+        setPlaybackRate(event.target.value)
+    };
+
     const scrub = event =>{
         const scrubTime = event.nativeEvent.offsetX / event.currentTarget.offsetWidth * videoRef.current.duration;
 
@@ -52,6 +80,7 @@ export const Player = () => {
     return (
         <div className = 'player'>
             <video 
+                id = "vid"
                 ref = {videoRef}
                 src = { video } 
                 onClick = {togglePlay}
@@ -85,12 +114,24 @@ export const Player = () => {
                     name = 'volume'
                     step = '0.05'
                     type = 'range'
+                    value = {volume}
+                    onChange = {onChangeVolume}
+                />
+                <input
+                    className = 'slider'
+                    max = '2'
+                    min = '0.8'
+                    name = 'playbackRate'
+                    step = '0.1'
+                    type = 'range'
+                    value = {playbackRate}
+                    onChange = {onChangePlaybackRate}
                 />
                 <button 
                     data-skip = '-10'
                     onClick = {skip}
                 >
-                    « 10s
+                    «10s
                 </button>
                 <button 
                     data-skip = '25'
@@ -98,7 +139,12 @@ export const Player = () => {
                 >
                     25s »
                 </button>
-                <button>&#10021;</button>
+                <button
+                    title = "Toggle Full screen"
+                    onClick={() => toggleFullScreen(videoRef.current)}
+                >
+                    &#10021;
+                </button>
             </div>
         </div>
     );
