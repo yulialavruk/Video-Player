@@ -35,12 +35,6 @@ export const Player = () => {
       }
     };
 
-    document.addEventListener("keypress", function(e) {
-        if (e.keyCode === 13) {
-            toggleFullScreen(videoRef.current);
-        }
-    }, false);
-
     const skip = event => {
         const seconds = event.target.dataset.skip;
 
@@ -53,18 +47,25 @@ export const Player = () => {
         setProgress(percent);
     };
 
-    const onChangeVolume = event =>{
-        videoRef.current.volume = event.target.value
-        setVolume(event.target.value)
-    };
+    // const onChangeVolume = event =>{
+    //     videoRef.current.volume = event.target.value
+    //     setVolume(event.target.value)
+    // };
 
-    const onChangePlaybackRate = event =>{
-        videoRef.current.playbackRate = event.target.value
-        setPlaybackRate(event.target.value)
-    };
+    // const onChangePlaybackRate = event =>{
+    //     videoRef.current.playbackRate = event.target.value
+    //     setPlaybackRate(event.target.value)
+    // };
 
     const onChange = event =>{
-                
+        const name = event.target.name;
+        videoRef.current[name] = event.target.value;
+        if (name === 'volume') {
+            setVolume(event.target.value)
+        }
+        if (name === 'playbackRate') {
+            setPlaybackRate(event.target.value)
+        }
     }
 
     const scrub = event =>{
@@ -77,6 +78,10 @@ export const Player = () => {
         const handler = event => {
             if (event.code === "Space") {
                 togglePlay();
+            }
+            if (event.code === "Enter") {
+                toggleFullScreen(videoRef.current);
+                console.log(event.code);
             }
         }
         document.addEventListener('keydown', handler);
@@ -123,7 +128,7 @@ export const Player = () => {
                     step = '0.05'
                     type = 'range'
                     value = {volume}
-                    onChange = {onChangeVolume}
+                    onChange = {onChange}
                 />
                 <input
                     className = 'slider'
@@ -133,7 +138,7 @@ export const Player = () => {
                     step = '0.1'
                     type = 'range'
                     value = {playbackRate}
-                    onChange = {onChangePlaybackRate}
+                    onChange = {onChange}
                 />
                 <button 
                     data-skip = '-10'
