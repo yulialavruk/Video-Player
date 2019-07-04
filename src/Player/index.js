@@ -10,11 +10,14 @@ export const Player = () => {
     const [isPlaying, setIsPlaying] = useState(false);
     const [progress, setProgress] = useState(0);
     const [isProgressCapturing, setIsProgressCapturing ] = useState(false);
-    const [volume, setVolume] = useState('0.5');
+    const [volume, setVolume] = useState('0.3');
     const [playbackRate, setPlaybackRate] = useState('1');
 
     const videoRef = useRef(null);
-
+    window.onload = () =>{
+        videoRef.current.volume = '0.3'
+    };
+    
     const togglePlay = () => {
         const method = videoRef.current.paused ? 'play' : 'pause';
         //console.log(videoRef);
@@ -22,11 +25,6 @@ export const Player = () => {
         setIsPlaying(method ==='play');
     };
 
-    // document.addEventListener("keypress", function(e) {
-    //       if (e.keyCode === 13) {
-    //         toggleFullScreen(videoRef.current);
-    //       }
-    //     }, false);
     const toggleFullScreen = (element) => {
       if(element.requestFullscreen) {
         element.requestFullscreen();
@@ -36,6 +34,12 @@ export const Player = () => {
         element.mozRequestFullScreen();
       }
     };
+
+    document.addEventListener("keypress", function(e) {
+        if (e.keyCode === 13) {
+            toggleFullScreen(videoRef.current);
+        }
+    }, false);
 
     const skip = event => {
         const seconds = event.target.dataset.skip;
@@ -59,6 +63,10 @@ export const Player = () => {
         setPlaybackRate(event.target.value)
     };
 
+    const onChange = event =>{
+                
+    }
+
     const scrub = event =>{
         const scrubTime = event.nativeEvent.offsetX / event.currentTarget.offsetWidth * videoRef.current.duration;
 
@@ -73,7 +81,7 @@ export const Player = () => {
         }
         document.addEventListener('keydown', handler);
         return () => document.removeEventListener('keydown', handler)
-    }, [])
+    }, []);
 
     const playControl = isPlaying ? <>&#10074;&#10074;</> : <>&#9654;</>;
 
